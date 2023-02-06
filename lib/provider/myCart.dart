@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -19,9 +20,23 @@ class MyCart with ChangeNotifier {
     return this._items.length;
   }
 
+  double get TotalPrice {
+    double total = 0;
+    this._items.forEach((element) {
+      total += element.sup_price;
+    });
+    return total;
+  }
+
+  int get Totalitems {
+    int total = 0;
+    this._items.forEach((element) {
+      total += element.qty;
+    });
+    return total;
+  }
+
   addToCart(Product prd) {
-    //2
-    //1  , 2
     var res = this._items.where((element) => element.prd.id == prd.id).toList();
 
     if (res.isEmpty) {
@@ -43,5 +58,22 @@ class MyCart with ChangeNotifier {
   RemoveFromCart(CartItem val) {
     this._items.remove(val);
     notifyListeners();
+  }
+
+  RemoveALL() {
+    this._items.clear();
+    notifyListeners();
+  }
+
+  updateCart(CartItem val, int qty) {
+    if (qty > 0) {
+      this._items.forEach((i) {
+        if (i.id == val.id) {
+          i.qty = qty;
+          i.sup_price = qty * i.prd.price;
+        }
+      });
+      notifyListeners();
+    }
   }
 }
